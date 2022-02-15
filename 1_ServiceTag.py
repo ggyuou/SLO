@@ -92,4 +92,4 @@ else:
     print("== Failed!!!")
     print("-- 응답코드: %d" % response.status_code)
     print("-- 에러내용 --")
-    print(response.text)
+    print(response.text) 
