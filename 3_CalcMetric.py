@@ -41,7 +41,7 @@ def createJsonObj():
 		"managementZones": ["mzName"],
         "conditions": [
             {
-                "attribute": "CPU_TIME",
+                "attribute": "RESPONSE_TIME",
                 "comparisonInfo": {
                     "type": "NUMBER",
                     "comparison": "LOWER_THAN_OR_EQUAL",
@@ -70,17 +70,24 @@ section = "tenant"
 tenantID = config.get(section, "tenantID")
 APIToken = config.get(section, "APIToken")
 section = "calcm"
+attriCondition = config.get(section,"attriCondition")
 rstCondition = config.get(section, "rstCondition")
+sourceUnit = config.get(section, "sourceUnit")
+comparedCondition = config.get(section, "comparedCondition")
 
 # 대상 Management Zone을 실행시 매개변수에서 받아옴
 arg = sys.argv[1]
 metricName = arg.replace(" ", "-")
-
+#metricName = arg.replace(" ", "_")
+#metricName = metricName.replace("-", "_")
+print(metricName)
 # 매개변수에서 받은 Management Zone 이름을 JSON에 반영
-calcName = "slo_fast_" + metricName + "_requests"
+calcName = "slo_fast_" + metricName + "_" + rstCondition + "_requests"
 jsonObj = createJsonObj()
 jsonObj["name"] = calcName
 jsonObj["tsmMetricKey"] = "calc:service." + calcName
+
+
 #jsonObj["filter"] = "type(\"SERVICE\"), mzName(\"" + arg + "\")"
 
 # 매개변수에서 받은 Management Zone 이름을 JSON에 반영
@@ -88,6 +95,9 @@ jsonObj["tsmMetricKey"] = "calc:service." + calcName
 jsonObj["managementZones"][0] = arg 
 
 # 빠른 리퀘스트에 대한 응답 시간 조건을 환경 파일 값으로 부터 설정
+jsonObj["conditions"][0]["attribute"] = attriCondition
+jsonObj["conditions"][0]["comparisonInfo"]["type"] = sourceUnit
+jsonObj["conditions"][0]["comparisonInfo"]["comparison"] = comparedCondition
 jsonObj["conditions"][0]["comparisonInfo"]["value"] = rstCondition
 
 #print(json.dumps(jsonObj))
